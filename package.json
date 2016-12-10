@@ -1,14 +1,14 @@
 {
-  "name": "torrent-uploader",
+  "name": "torrent-saver",
   "version": "1.0.0",
-  "description": "",
+  "description": "Download torrents to your Dropbox",
   "main": "index.js",
   "scripts": {
     "start:dev": "nodemon index.js",
     "start": "node index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["torrent", "dropbox", "download"],
+  "author": "Kevin Ndung'u",
   "license": "ISC",
   "dependencies": {
     "dropbox": "^2.5.0",

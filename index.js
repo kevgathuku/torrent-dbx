@@ -27,7 +27,8 @@ app.get('/torAdd', function(req, res) {
       console.log('torrent download finished');
       torrent.files.forEach(function(file) {
         console.log(`${file.length} ${file.path} \n`);
-        var url = `https://warm-reef-79245.herokuapp.com/download?file=${file.path}`;
+        var url = encodeURI(`https://warm-reef-79245.herokuapp.com/download?file=${file.path}`);
+        console.log(url);
         dbx.filesSaveUrl({path: `/Saves/${file.path}`, url: url})
           .then(function(response) {
             if (response['.tag'] === 'async_job_id') {

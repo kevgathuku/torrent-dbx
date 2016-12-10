@@ -12,8 +12,8 @@ var oUrl = 'https://api.openload.co/1/remotedl/add?login=' + openload_login + '&
 app.use(express.static(__dirname + '/public'));
 
 //this provides download link for downloaded files
-app.get('/download/:file', function(req, res) {
-  var file = path.join(__dirname, 'public', req.params.file);
+app.get('/download', function(req, res) {
+  var file = path.join(__dirname, 'public', req.query.file);
   res.download(file); // Set disposition and send it.
 });
 
@@ -27,7 +27,7 @@ app.get('/torAdd', function(req, res) {
       console.log('torrent download finished');
       torrent.files.forEach(function(file) {
         console.log(`${file.name} ${file.length} ${file.path} \n`);
-        request(oUrl + encodeURI(`https://warm-reef-79245.herokuapp.com/download/${file.path}`), function(error, response, body) {
+        request(oUrl + encodeURI(`https://warm-reef-79245.herokuapp.com/download?file=${file.path}`), function(error, response, body) {
           if (!error && response.statusCode == 200) {
             console.log(body);
           }

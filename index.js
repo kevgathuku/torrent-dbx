@@ -14,7 +14,9 @@ app.use(express.static(__dirname + '/public'));
 //this provides download link for downloaded files
 app.get('/download', function(req, res) {
   var file = path.join(__dirname, 'public', req.query.file);
-  res.download(file); // Set disposition and send it.
+  var fileName = path.basename(file);
+  console.log(`Dowloading ${fileName} ...`);
+  res.download(file, fileName); // Set disposition and send it.
 });
 
 //to add torrent enter 'your_heroku_name.herokuapp.com/torAdd?magnet=magnet_link

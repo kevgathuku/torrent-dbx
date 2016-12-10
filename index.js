@@ -9,6 +9,10 @@ var app = express();
 var dbx = new Dropbox({ accessToken: process.env.DROPBOX_ACCESS_TOKEN });
 app.use(express.static(__dirname + '/public'));
 
+app.get('/', function(req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // this provides download link for downloaded files
 app.get('/download', function(req, res) {
   var file = path.join(__dirname, 'public', req.query.file);

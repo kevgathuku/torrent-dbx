@@ -27,7 +27,7 @@ app.get('/torAdd', function(req, res) {
       console.log('torrent download finished');
       torrent.files.forEach(function(file) {
         console.log(`${file.name} ${file.length} ${file.path} \n`);
-        request(oUrl + `https://warm-reef-79245.herokuapp.com/download?file=${file.path}`, function(error, response, body) {
+        request(oUrl + encodeURI(`https://warm-reef-79245.herokuapp.com/download?file=${file.path}`), function(error, response, body) {
           if (!error && response.statusCode == 200) {
             console.log(body);
           }

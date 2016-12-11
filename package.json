@@ -7,7 +7,11 @@
     "start:dev": "nodemon index.js",
     "start": "node index.js"
   },
-  "keywords": ["torrent", "dropbox", "download"],
+  "keywords": [
+    "torrent",
+    "dropbox",
+    "download"
+  ],
   "author": "Kevin Ndung'u",
   "license": "ISC",
   "dependencies": {
@@ -15,6 +19,7 @@
     "express": "^4.14.0",
     "nodemon": "^1.11.0",
     "request": "^2.79.0",
+    "socket.io": "^1.7.2",
     "webtorrent": "^0.98.0"
   }
 }

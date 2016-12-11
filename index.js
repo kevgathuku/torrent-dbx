@@ -1,13 +1,17 @@
-var express = require('express');
-var WebTorrent = require('webtorrent');
-var path = require('path');
-var client = new WebTorrent();
-var request = require('request');
-var Dropbox = require('dropbox');
+const express = require('express');
+const WebTorrent = require('webtorrent');
+const path = require('path');
+const os = require('os');
+const request = require('request');
+const Dropbox = require('dropbox');
+const SocketIO = require('socket.io');
 
 var app = express();
-var dbx = new Dropbox({ accessToken: process.env.DROPBOX_ACCESS_TOKEN });
-app.use(express.static(__dirname + '/public'));
+var dbx = new Dropbox({
+  accessToken: process.env.DROPBOX_ACCESS_TOKEN
+});
+var client = new WebTorrent();
+const PORT = process.env.PORT || 3000;
 
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
@@ -26,42 +30,57 @@ app.get('/torAdd', function(req, res) {
   console.log('started');
   client.add(req.query.magnet, {
     path: 'public'
-  }, function(torrent) {
-    torrent.on('done', function() {
+  }, (torrent) => {
+    torrent.on('done', () => {
       console.log('torrent download finished');
       torrent.files.forEach(function(file) {
         console.log(`${file.length} ${file.path} \n`);
+        // TODO: Remove URL hardcoding
         var url = encodeURI(`https://warm-reef-79245.herokuapp.com/download?file=${file.path}`);
-        console.log(url);
-        dbx.filesSaveUrl({path: `/Saves/${file.path}`, url: url})
-          .then(function(response) {
+        dbx.filesSaveUrl({
+            path: `/Saves/${file.path}`,
+            url: url
+          })
+          .then((response) => {
+            // Async upload started
             if (response['.tag'] === 'async_job_id') {
               job_tag = response['async_job_id'];
+              // app.io.emit('job_id', job_tag);
               console.log(`Started async upload: ${response['async_job_id']}`);
             } else if (response['.tag'] === complete) {
               console.log(response['complete']);
             }
             console.log(response);
           })
-          .catch(function(error) {
+          .catch((error) => {
             console.log(error);
           });
       });
     });
   });
-  res.send("downloading");
+  res.send('downloading');
 });
 
 app.get('/status/:async_job_id', function(req, res) {
-  dbx.filesSaveUrlCheckJobStatus({async_job_id: req.params.async_job_id})
-    .then(function(response) {
+  dbx.filesSaveUrlCheckJobStatus({
+      async_job_id: req.params.async_job_id
+    })
+    .then((response) => {
       res.send(response);
     })
-    .catch(function(error) {
+    .catch((error) => {
       res.send(error);
     });
 });
 
-app.listen(process.env.PORT || 3000, function () {
-  console.log('Torrent app listening on port 3000!')
-})
+const server = app
+  .use(express.static(__dirname + '/public'))
+  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+
+const io = SocketIO(server);
+app.io = io;
+
+io.on('connection', (socket) => {
+  console.log('Client connected');
+  socket.on('disconnect', () => console.log('Client disconnected'));
+});

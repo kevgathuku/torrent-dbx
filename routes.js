@@ -1,6 +1,7 @@
 const path = require('path');
 const Dropbox = require('dropbox');
 const express = require('express');
+var magnet = require('magnet-uri');
 const WebTorrent = require('webtorrent');
 const firebase = require('firebase');
 var client = new WebTorrent();
@@ -37,6 +38,7 @@ router.get('/torAdd', function(req, res) {
   client.add(req.query.magnet, {
     path: 'public'
   }, (torrent) => {
+    let parsedInfo = magnet.decode(torrent.magnetURI);
     torrent.on('done', () => {
       console.log('torrent download finished');
       torrent.files.forEach(function(file, index) {
@@ -51,11 +53,12 @@ router.get('/torAdd', function(req, res) {
             // Async upload started
             if (response['.tag'] === 'async_job_id') {
               // check async upload status
+              firebase.database().ref(`${torrent.infoHash}/name`).set(parsedInfo.name);
               checkComplete(torrent.infoHash, response['async_job_id']);
               console.log(`Started async upload: ${response['async_job_id']}`);
             } else if (response['.tag'] === 'complete') {
               console.log(response['complete']);
-              myFunct(data, jobId, itemId)
+              // checkComplete(torrent.infoHash, itemId)
             }
             console.log(response);
           })
@@ -68,14 +71,14 @@ router.get('/torAdd', function(req, res) {
   res.send('downloading');
 });
 
-let checkComplete = (hash, fileId) => {
+let checkComplete = (hash, jobId) => {
   dbx.filesSaveUrlCheckJobStatus({
-      async_job_id: fileId
+      async_job_id: jobId
     })
     .then((response) => {
       // incomplete / complete
-      firebase.database().ref(`${hash}/items/${fileId}`).set(response['.tag']);
-      if (response.tag !== 'complete') process.nextTick(checkComplete, hash, fileId);
+      firebase.database().ref(`${hash}/items/${jobId}`).set(response['.tag']);
+      if (response.tag !== 'complete') process.nextTick(checkComplete, hash, jobId);
     })
     .catch((error) => {
       console.error(error);

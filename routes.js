@@ -2,12 +2,21 @@ const path = require('path');
 const Dropbox = require('dropbox');
 const express = require('express');
 const WebTorrent = require('webtorrent');
-
+const firebase = require('firebase');
 var client = new WebTorrent();
 var dbx = new Dropbox({
   accessToken: process.env.DROPBOX_ACCESS_TOKEN
 });
 var router = express.Router();
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.FIREBASE_DB_URL,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID
+};
+
+firebase.initializeApp(firebaseConfig);
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -30,10 +39,10 @@ router.get('/torAdd', function(req, res) {
   }, (torrent) => {
     torrent.on('done', () => {
       console.log('torrent download finished');
-      torrent.files.forEach(function(file) {
+      torrent.files.forEach(function(file, index) {
         console.log(`${file.length} ${file.path} \n`);
         // TODO: Remove URL hardcoding
-        var url = encodeURI(`https://warm-reef-79245.herokuapp.com/download?file=${file.path}`);
+        var url = encodeURI(`${req.hostname}/download?file=${file.path}`);
         dbx.filesSaveUrl({
             path: `/Saves/${file.path}`,
             url: url
@@ -41,11 +50,12 @@ router.get('/torAdd', function(req, res) {
           .then((response) => {
             // Async upload started
             if (response['.tag'] === 'async_job_id') {
-              job_tag = response['async_job_id'];
-              // app.io.emit('job_id', job_tag);
+              // check async upload status
+              checkComplete(torrent.infoHash, response['async_job_id']);
               console.log(`Started async upload: ${response['async_job_id']}`);
-            } else if (response['.tag'] === complete) {
+            } else if (response['.tag'] === 'complete') {
               console.log(response['complete']);
+              myFunct(data, jobId, itemId)
             }
             console.log(response);
           })
@@ -58,16 +68,18 @@ router.get('/torAdd', function(req, res) {
   res.send('downloading');
 });
 
-router.get('/status/:async_job_id', function(req, res) {
+let checkComplete = (hash, fileId) => {
   dbx.filesSaveUrlCheckJobStatus({
-      async_job_id: req.params.async_job_id
+      async_job_id: fileId
     })
     .then((response) => {
-      res.send(response);
+      // incomplete / complete
+      firebase.database().ref(`${hash}/items/${fileId}`).set(response.tag);
+      if (response.tag !== 'complete') process.nextTick(checkComplete, jobId, fileId);
     })
     .catch((error) => {
-      res.send(error);
+      console.error(error);
     });
-});
+};
 
 module.exports = router;

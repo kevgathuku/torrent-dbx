@@ -42,7 +42,7 @@ router.get('/torAdd', function(req, res) {
       torrent.files.forEach(function(file, index) {
         console.log(`${file.length} ${file.path} \n`);
         // TODO: Remove URL hardcoding
-        var url = encodeURI(`${req.hostname}/download?file=${file.path}`);
+        var url = encodeURI(`https://warm-reef-79245.herokuapp.com/download?file=${file.path}`);
         dbx.filesSaveUrl({
             path: `/Saves/${file.path}`,
             url: url

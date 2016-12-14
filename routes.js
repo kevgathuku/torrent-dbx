@@ -74,8 +74,8 @@ let checkComplete = (hash, fileId) => {
     })
     .then((response) => {
       // incomplete / complete
-      firebase.database().ref(`${hash}/items/${fileId}`).set(response.tag);
-      if (response.tag !== 'complete') process.nextTick(checkComplete, jobId, fileId);
+      firebase.database().ref(`${hash}/items/${fileId}`).set(response['.tag']);
+      if (response.tag !== 'complete') process.nextTick(checkComplete, hash, fileId);
     })
     .catch((error) => {
       console.error(error);

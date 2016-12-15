@@ -1,7 +1,7 @@
 const path = require('path');
 const Dropbox = require('dropbox');
 const express = require('express');
-var magnet = require('magnet-uri');
+const magnet = require('magnet-uri');
 const WebTorrent = require('webtorrent');
 const firebase = require('firebase');
 var client = new WebTorrent();
@@ -43,8 +43,7 @@ router.get('/torAdd', function(req, res) {
       console.log('torrent download finished');
       torrent.files.forEach(function(file, index) {
         console.log(`${file.length} ${file.path} \n`);
-        // TODO: Remove URL hardcoding
-        var url = encodeURI(`https://warm-reef-79245.herokuapp.com/download?file=${file.path}`);
+        var url = encodeURI(`${req.protocol}://${req.hostname}/download?file=${file.path}`);
         dbx.filesSaveUrl({
             path: `/Saves/${file.path}`,
             url: url

@@ -22,7 +22,6 @@
     "magnet-uri": "^5.1.5",
     "nodemon": "^1.11.0",
     "request": "^2.79.0",
-    "socket.io": "^1.7.2",
     "webtorrent": "^0.98.0"
   }
 }

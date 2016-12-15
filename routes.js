@@ -84,14 +84,21 @@ let checkComplete = (hash, jobId) => {
     .then((response) => {
       // 'in_progress' | 'complete' | 'failed'
       database.ref(`${hash}/items/${jobId}`).set(response['.tag']);
-      if (response['.tag'] === 'in_progress') {
-        // Call the function again after 10 seconds
-        setTimeout(
-          function() {
-            process.nextTick(checkComplete, hash, jobId);
-          }, 10 * 1000);
+      switch (response['.tag']) {
+        case 'in_progress':
+          // Call the function again after 10 seconds
+          setTimeout(
+            function() {
+              process.nextTick(checkComplete, hash, jobId);
+            }, 10 * 1000);
+          break;
+        case 'failed':
+          console.log('Failed: ', response['failed'])
+          break;
+        case 'complete':
+          console.log(`${jobId} download complete`)
+          break;
       }
-      if (response['.tag'] === 'failed') console.log(response['failed']);
     })
     .catch((error) => {
       console.error(error);

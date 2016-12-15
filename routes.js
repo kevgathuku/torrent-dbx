@@ -27,17 +27,17 @@ router.get('/', function(req, res) {
 
 // this provides download link for downloaded files
 router.get('/download', function(req, res) {
-  var file = path.join(__dirname, 'public', req.query.file);
+  var file = path.join(__dirname, 'tmp', req.query.file);
   var fileName = path.basename(file);
   console.log(`Dowloading ${fileName} ...`);
   res.download(file, fileName); // Set disposition and send it.
 });
 
-// to add torrent enter 'your_heroku_name.herokuapp.com/torAdd?magnet=magnet_link
+// to add torrent enter 'http://your_url.com/torAdd?magnet=magnet_link
 router.get('/torAdd', function(req, res) {
   console.log('started');
   client.add(req.query.magnet, {
-    path: 'public'
+    path: 'tmp'
   }, (torrent) => {
     let parsedInfo = magnet.decode(torrent.magnetURI);
     torrent.on('done', () => {
@@ -57,8 +57,7 @@ router.get('/torAdd', function(req, res) {
               checkComplete(torrent.infoHash, response['async_job_id']);
               console.log(`Started async upload: ${response['async_job_id']}`);
             } else if (response['.tag'] === 'complete') {
-              console.log(response['complete']);
-              // checkComplete(torrent.infoHash, itemId)
+              console.log(`Downloaded ${file.name}`);
             }
             console.log(response);
           })

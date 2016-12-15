@@ -1,13 +1,24 @@
 const path = require('path');
 const Dropbox = require('dropbox');
 const express = require('express');
+const magnet = require('magnet-uri');
 const WebTorrent = require('webtorrent');
-
+const firebase = require('firebase');
 var client = new WebTorrent();
 var dbx = new Dropbox({
   accessToken: process.env.DROPBOX_ACCESS_TOKEN
 });
 var router = express.Router();
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.FIREBASE_DB_URL,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID
+};
+
+firebase.initializeApp(firebaseConfig);
+let database = firebase.database();
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -16,24 +27,25 @@ router.get('/', function(req, res) {
 
 // this provides download link for downloaded files
 router.get('/download', function(req, res) {
-  var file = path.join(__dirname, 'public', req.query.file);
+  var file = path.join(__dirname, 'tmp', req.query.file);
   var fileName = path.basename(file);
   console.log(`Dowloading ${fileName} ...`);
   res.download(file, fileName); // Set disposition and send it.
 });
 
-// to add torrent enter 'your_heroku_name.herokuapp.com/torAdd?magnet=magnet_link
+// to add torrent enter 'http://your_url.com/torAdd?magnet=magnet_link
 router.get('/torAdd', function(req, res) {
   console.log('started');
   client.add(req.query.magnet, {
-    path: 'public'
+    path: 'tmp'
   }, (torrent) => {
+    let parsedInfo = magnet.decode(torrent.magnetURI);
     torrent.on('done', () => {
       console.log('torrent download finished');
-      torrent.files.forEach(function(file) {
+      torrent.files.forEach(function(file, index) {
         console.log(`${file.length} ${file.path} \n`);
-        // TODO: Remove URL hardcoding
-        var url = encodeURI(`https://warm-reef-79245.herokuapp.com/download?file=${file.path}`);
+        // Must be a publicly accessible URL for Dropbox upload to work
+        var url = encodeURI(`${req.protocol}://${req.hostname}:${req.app.port}/download?file=${file.path}`);
         dbx.filesSaveUrl({
             path: `/Saves/${file.path}`,
             url: url
@@ -41,11 +53,12 @@ router.get('/torAdd', function(req, res) {
           .then((response) => {
             // Async upload started
             if (response['.tag'] === 'async_job_id') {
-              job_tag = response['async_job_id'];
-              // app.io.emit('job_id', job_tag);
+              // check async upload status
+              database.ref(`${torrent.infoHash}/name`).set(parsedInfo.name);
+              checkComplete(torrent.infoHash, response['async_job_id']);
               console.log(`Started async upload: ${response['async_job_id']}`);
-            } else if (response['.tag'] === complete) {
-              console.log(response['complete']);
+            } else if (response['.tag'] === 'complete') {
+              console.log(`Downloaded ${file.name}`);
             }
             console.log(response);
           })
@@ -58,16 +71,24 @@ router.get('/torAdd', function(req, res) {
   res.send('downloading');
 });
 
-router.get('/status/:async_job_id', function(req, res) {
-  dbx.filesSaveUrlCheckJobStatus({
-      async_job_id: req.params.async_job_id
-    })
+let checkStatus = (jobId) => {
+  return dbx.filesSaveUrlCheckJobStatus({
+    async_job_id: jobId
+  });
+};
+
+let checkComplete = (hash, jobId) => {
+  console.log('Checking status of ', jobId);
+  checkStatus(jobId)
     .then((response) => {
-      res.send(response);
+      // 'in_progress' | 'complete' | 'failed'
+      database.ref(`${hash}/items/${jobId}`).set(response['.tag']);
+      if (response['.tag'] === 'in_progress') process.nextTick(checkComplete, hash, jobId);
+      if (response['.tag'] === 'failed') console.log(response['failed']);
     })
     .catch((error) => {
-      res.send(error);
+      console.error(error);
     });
-});
+};
 
 module.exports = router;

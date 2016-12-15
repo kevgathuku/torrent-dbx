@@ -45,7 +45,8 @@ router.get('/torAdd', function(req, res) {
       torrent.files.forEach(function(file, index) {
         console.log(`${file.length} ${file.path} \n`);
         // Must be a publicly accessible URL for Dropbox upload to work
-        var url = encodeURI(`${req.protocol}://${req.hostname}:${req.app.port}/download?file=${file.path}`);
+        var url = encodeURI(`${req.protocol}://${req.hostname}/download?file=${file.path}`);
+        console.log(url);
         dbx.filesSaveUrl({
             path: `/Saves/${file.path}`,
             url: url

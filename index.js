@@ -2,6 +2,7 @@ const express = require('express');
 const os = require('os');
 const request = require('request');
 const SocketIO = require('socket.io');
+require('dotenv').config();
 
 var app = express();
 const PORT = process.env.PORT || 3000;

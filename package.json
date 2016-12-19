@@ -15,6 +15,7 @@
   "author": "Kevin Ndung'u",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "dropbox": "^2.5.0",
     "express": "^4.14.0",
     "firebase": "^3.6.4",

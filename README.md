@@ -42,3 +42,7 @@ downloaded and saved to your Dropbox account under the `Saves` folder.
 Because of the way the Dropbox functionality is set up, the app must be deployed
 for the Dropbox upload to work. [Heroku](https://www.heroku.com/) is the
 recommended hosting platform.
+
+Try it out below:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)

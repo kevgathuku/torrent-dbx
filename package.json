@@ -13,7 +13,7 @@
     "download"
   ],
   "author": "Kevin Ndung'u",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "dropbox": "^2.5.0",
     "express": "^4.14.0",

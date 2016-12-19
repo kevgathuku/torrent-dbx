@@ -4,17 +4,16 @@ const express = require('express');
 const magnet = require('magnet-uri');
 const WebTorrent = require('webtorrent');
 const firebase = require('firebase');
-var client = new WebTorrent();
-var dbx = new Dropbox({
+
+const client = new WebTorrent();
+const router = express.Router();
+
+const dbx = new Dropbox({
   accessToken: process.env.DROPBOX_ACCESS_TOKEN
 });
-var router = express.Router();
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.FIREBASE_DB_URL,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID
+  databaseURL: process.env.FIREBASE_DB_URL
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -27,10 +26,10 @@ router.get('/', function(req, res) {
 
 // this provides download link for downloaded files
 router.get('/download', function(req, res) {
-  var file = path.join(__dirname, 'tmp', req.query.file);
-  var fileName = path.basename(file);
+  const file = path.join(__dirname, 'tmp', req.query.file);
+  const fileName = path.basename(file);
   console.log(`Dowloading ${fileName} ...`);
-  res.download(file, fileName); // Set disposition and send it.
+  res.download(file, fileName);
 });
 
 // to add torrent enter 'http://your_url.com/torAdd?magnet=magnet_link
@@ -39,13 +38,13 @@ router.get('/torAdd', function(req, res) {
   client.add(req.query.magnet, {
     path: 'tmp'
   }, (torrent) => {
-    let parsedInfo = magnet.decode(torrent.magnetURI);
+    const parsedInfo = magnet.decode(torrent.magnetURI);
     torrent.on('done', () => {
       console.log('torrent download finished');
       torrent.files.forEach(function(file, index) {
         console.log(`${file.length} ${file.path} \n`);
         // Must be a publicly accessible URL for Dropbox upload to work
-        var url = encodeURI(`${req.protocol}://${req.hostname}/download?file=${file.path}`);
+        const url = encodeURI(`${req.protocol}://${req.hostname}/download?file=${file.path}`);
         console.log(url);
         dbx.filesSaveUrl({
             path: `/Saves/${file.path}`,
@@ -79,7 +78,7 @@ let checkStatus = (jobId) => {
 };
 
 let checkComplete = (hash, jobId) => {
-  console.log('Checking status of ', jobId);
+  console.log(`Checking status of ${jobId}`);
   checkStatus(jobId)
     .then((response) => {
       // 'in_progress' | 'complete' | 'failed'

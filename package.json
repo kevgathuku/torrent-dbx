@@ -1,5 +1,5 @@
 {
-  "name": "torrent-saver",
+  "name": "torrent-dbx",
   "version": "1.0.0",
   "description": "Download torrents to your Dropbox",
   "main": "index.js",

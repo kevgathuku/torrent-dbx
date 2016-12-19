@@ -33,10 +33,10 @@ router.get('/download', function(req, res) {
 });
 
 // to add torrent enter 'http://your_url.com/torAdd?magnet=magnet_link
-router.get('/torAdd', function(req, res) {
+router.post('/torAdd', function(req, res) {
   console.log('started');
-  client.add(req.query.magnet, {
-    path: 'tmp'
+  client.add(req.body.magnet, {
+    path: path.join(__dirname, 'tmp')
   }, (torrent) => {
     const parsedInfo = magnet.decode(torrent.magnetURI);
     torrent.on('done', () => {
@@ -63,7 +63,7 @@ router.get('/torAdd', function(req, res) {
             console.log(response);
           })
           .catch((error) => {
-            console.log(error);
+            console.error(error);
           });
       });
     });

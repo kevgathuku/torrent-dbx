@@ -92,7 +92,7 @@ let checkComplete = (hash, jobId) => {
             }, 10 * 1000);
           break;
         case 'failed':
-          console.log('Failed: ', response['failed'])
+          console.log('Failed:', response['failed'])
           break;
         case 'complete':
           console.log(`${jobId} download complete`)

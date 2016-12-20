@@ -12,9 +12,7 @@ app.use(bodyParser.urlencoded({
     extended: true
   }))
   .use(bodyParser.json())
-  .use('/', require('./routes'))
-  .use(express.static(__dirname + '/public'));
+  .use('/', require('./routes'));
 
 const server = app
-  .use(express.static(__dirname + '/public'))
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));

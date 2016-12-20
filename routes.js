@@ -19,11 +19,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 let database = firebase.database();
 
-/* GET home page. */
-router.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
 // this provides download link for downloaded files
 router.get('/download', function(req, res) {
   const file = path.join(__dirname, 'tmp', req.query.file);

@@ -34,11 +34,11 @@ router.get('/download', function(req, res) {
 
 // to add torrent enter 'http://your_url.com/torAdd?magnet=magnet_link
 router.post('/torAdd', function(req, res) {
-  console.log('started');
+  const parsedInfo = magnet.decode(req.body.magnet);
+  console.log(`Downloading ${parsedInfo.name}`);
   client.add(req.body.magnet, {
     path: path.join(__dirname, 'tmp')
   }, (torrent) => {
-    const parsedInfo = magnet.decode(torrent.magnetURI);
     torrent.on('done', () => {
       console.log('torrent download finished');
       torrent.files.forEach(function(file, index) {
@@ -68,7 +68,7 @@ router.post('/torAdd', function(req, res) {
       });
     });
   });
-  res.send('downloading');
+  res.send(`Downloading ${parsedInfo.name}`);
 });
 
 let checkStatus = (jobId) => {

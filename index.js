@@ -1,8 +1,10 @@
-const express = require('express');
 const http = require('http');
-const bodyParser = require('body-parser');
-const isProduction = process.env.NODE_ENV === 'production';
 
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const express = require('express');
+
+const isProduction = process.env.NODE_ENV === 'production';
 if (!isProduction) require('dotenv').config();
 
 var app = express();
@@ -18,5 +20,11 @@ app.use(bodyParser.urlencoded({
     extended: true
   }))
   .use(bodyParser.json())
-  .use('/', require('./routes'))
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+  .use(cors({
+    origin: true,
+    credentials: true
+  }))
+  .use('/', require('./routes'));
+
+// Must use http server as listener rather than express app
+server.listen(PORT, () => console.log(`Listening on ${ PORT }`));

@@ -12,6 +12,10 @@ const PORT = process.env.PORT || 4000;
 const server = http.createServer(app);
 const io = require('socket.io')(server);
 
+// Attach the io instance to the express app object
+// to make it accessible from the routes
+app.io = io;
+
 io.on('connection', (socket) => {
   console.log('New client connected');
 });

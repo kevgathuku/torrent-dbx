@@ -29,13 +29,22 @@ router.get('/download', function(req, res) {
 
 // to add torrent enter 'http://your_url.com/torAdd?magnet=magnet_link
 router.post('/torAdd', function(req, res) {
+  const socket = req.app.io;
   const parsedInfo = magnet.decode(req.body.magnet);
   console.log(`Downloading ${parsedInfo.name}`);
   client.add(req.body.magnet, {
     path: path.join(__dirname, 'tmp')
   }, (torrent) => {
     torrent.on('done', () => {
-      console.log('torrent download finished');
+      console.log('Torrent download finished');
+      // Send status to the client
+      socket.emit('got_torrent', {
+        name: parsedInfo.name,
+        hash: torrent.infoHash,
+        status: 'Torrent download finished',
+        files: []
+      });
+      // Start saving each of the downloaded files to Dropbox
       torrent.files.forEach(function(file, index) {
         console.log(`${file.length} ${file.path} \n`);
         // Must be a publicly accessible URL for Dropbox upload to work
@@ -48,16 +57,39 @@ router.post('/torAdd', function(req, res) {
           .then((response) => {
             // Async upload started
             if (response['.tag'] === 'async_job_id') {
-              // check async upload status
-              database.ref(`${torrent.infoHash}/name`).set(parsedInfo.name);
-              checkComplete(torrent.infoHash, response['async_job_id']);
+              let statusObject = {
+                hash: torrent.infoHash,
+                name: file.name,
+                async_job_id: response['async_job_id']
+              };
+              // Send status to the client
+              socket.emit('file_status',
+                Object.assign(statusObject, {
+                  status: 'started',
+                  message: `Started uploading ${file.name} to Dropbox`
+                }));
+              checkComplete(statusObject, socket);
               console.log(`Started async upload: ${response['async_job_id']}`);
             } else if (response['.tag'] === 'complete') {
               console.log(`Downloaded ${file.name}`);
+              // Send status to the client
+              socket.emit('file_status', {
+                hash: torrent.infoHash,
+                name: file.name,
+                status: 'complete',
+                message: `Downloaded ${file.name} to Dropbox`
+              });
             }
             console.log(response);
           })
           .catch((error) => {
+            // Send status to the client
+            socket.emit('file_status', {
+              hash: torrent.infoHash,
+              name: file.name,
+              status: 'failed',
+              message: `Failed to upload ${file.name} to Dropbox`
+            });
             console.error(error);
           });
       });
@@ -66,31 +98,41 @@ router.post('/torAdd', function(req, res) {
   res.send(`Downloading ${parsedInfo.name}`);
 });
 
-let checkStatus = (jobId) => {
-  return dbx.filesSaveUrlCheckJobStatus({
-    async_job_id: jobId
-  });
-};
-
-let checkComplete = (hash, jobId) => {
-  console.log(`Checking status of ${jobId}`);
-  checkStatus(jobId)
+let checkComplete = (statusObject, socket) => {
+  console.log(`Checking status of ${statusObject.async_job_id}`);
+  dbx.filesSaveUrlCheckJobStatus({
+      async_job_id: statusObject.async_job_id
+    })
     .then((response) => {
-      // 'in_progress' | 'complete' | 'failed'
-      database.ref(`${hash}/items/${jobId}`).set(response['.tag']);
+      // Status: 'in_progress' | 'complete' | 'failed'
+      let fileStatus = {
+        hash: statusObject.hash,
+        name: statusObject.name,
+        async_job_id: statusObject.async_job_id,
+        status: response['.tag']
+      };
       switch (response['.tag']) {
         case 'in_progress':
+          socket.emit('file_status', Object.assign(fileStatus, {
+            message: `${statusObject.name} upload in progress`
+          }));
           // Call the function again after 10 seconds
           setTimeout(
             function() {
-              process.nextTick(checkComplete, hash, jobId);
+              process.nextTick(checkComplete, statusObject, socket);
             }, 10 * 1000);
           break;
         case 'failed':
+          socket.emit('file_status', Object.assign(fileStatus, {
+            message: `${statusObject.name} upload failed`
+          }));
           console.log('Failed:', response['failed'])
           break;
         case 'complete':
-          console.log(`${jobId} download complete`)
+          socket.emit('file_status', Object.assign(fileStatus, {
+            message: `${statusObject.name} upload complete`
+          }));
+          console.log(`${statusObject.async_job_id} upload complete`)
           break;
       }
     })

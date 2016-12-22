@@ -3,21 +3,12 @@ const Dropbox = require('dropbox');
 const express = require('express');
 const magnet = require('magnet-uri');
 const WebTorrent = require('webtorrent');
-const firebase = require('firebase');
 
-const client = new WebTorrent();
 const router = express.Router();
-
+const client = new WebTorrent();
 const dbx = new Dropbox({
   accessToken: process.env.DROPBOX_ACCESS_TOKEN
 });
-const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  databaseURL: process.env.FIREBASE_DB_URL
-};
-
-firebase.initializeApp(firebaseConfig);
-let database = firebase.database();
 
 // this provides download link for downloaded files
 router.get('/download', function(req, res) {

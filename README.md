@@ -26,10 +26,6 @@ cp .env.example .env
 The following are the required environment variables:
 
 - `DROPBOX_ACCESS_TOKEN`- Required to save files to your Dropbox account. You can obtain one from https://www.dropbox.com/developers/apps
-- `FIREBASE_API_KEY` - Required for saving progress info to Firebase. This can be obtained from https://firebase.google.com/docs/database/
-- `FIREBASE_DB_URL` - This is where the download progress is saved. Obtain one here: https://firebase.google.com/docs/database/
-
-A comprehensive guide on how to setup firebase can be found at https://firebase.google.com/docs/web/setup
 
 ## Usage
 

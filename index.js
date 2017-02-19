@@ -10,7 +10,9 @@ if (!isProduction) require('dotenv').config();
 var app = express();
 const PORT = process.env.PORT || 4000;
 const server = http.createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  origins: '*:*'
+});
 
 // Attach the io instance to the express app object
 // to make it accessible from the routes

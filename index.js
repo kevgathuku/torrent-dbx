@@ -34,8 +34,7 @@ app.use(bodyParser.urlencoded({
   }))
   .use(bodyParser.json())
   .use(cors({
-    origin: true,
-    credentials: true
+    origin: true
   }))
   .use('/', require('./routes'));
 

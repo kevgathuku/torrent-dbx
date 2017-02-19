@@ -14,6 +14,12 @@ const io = require('socket.io')(server, {
   origins: '*:*'
 });
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // Attach the io instance to the express app object
 // to make it accessible from the routes
 app.io = io;
@@ -21,6 +27,7 @@ app.io = io;
 io.on('connection', (socket) => {
   console.log('New client connected');
 });
+
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -31,6 +38,7 @@ app.use(bodyParser.urlencoded({
     credentials: true
   }))
   .use('/', require('./routes'));
+
 
 // Must use http server as listener rather than express app
 server.listen(PORT, () => console.log(`Listening on ${ PORT }`));

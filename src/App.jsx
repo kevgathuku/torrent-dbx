@@ -33,8 +33,7 @@ const App = observer(class App extends Component {
   }
 
   componentDidMount() {
-    actions.socket.on('got_torrent', this.torrentDownloaded)
-    // actions.socket.on('file_status', this.updateFileStatus)
+    actions.socket.on('got_torrent', this.torrentDownloaded);
   }
 
   torrentDownloaded = (torrent) => {
@@ -43,11 +42,6 @@ const App = observer(class App extends Component {
     beginDropboxUpload(store, torrent);
     store.decrementPendingRequests();
   }
-
-  // startDropboxUpload = (files) => {
-  //   const store = this.props.store;
-  //   store.updateFileStatus(fileStatus);
-  // }
 
   addTorrent = (event) => {
     // Prevent the default action for form submission

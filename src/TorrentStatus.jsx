@@ -9,12 +9,6 @@ const TorrentItem = observer(class TorrentItem extends Component {
     this.props.onDismissTorrent(this.props.torrent);
   }
 
-  componentDidMount() {
-    console.log(this.props.torrent.files.map(function(x) {
-      return x.status;
-    }));
-  }
-
   render() {
     const torrent = this.props.torrent;
     return (

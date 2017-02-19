@@ -26,6 +26,7 @@ class AppStore {
         this.torrents.remove(torrent);
       }),
       updateFileStatus: action('updateFileStatus', function(fileStatus) {
+        console.log(fileStatus);
         // Find the correct torrent in the torrents array
         let torrent = this.torrents.find(tor => {
           return tor.hash === fileStatus.hash;

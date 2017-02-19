@@ -25,7 +25,8 @@ cp .env.example .env
 
 The following are the required environment variables:
 
-- `DROPBOX_ACCESS_TOKEN`- Required to save files to your Dropbox account. You can obtain one from https://www.dropbox.com/developers/apps
+- `REACT_APP_DROPBOX_ACCESS_TOKEN`- Required to save files to your Dropbox account.
+You can obtain one from https://www.dropbox.com/developers/apps
 
 ## Local development
 

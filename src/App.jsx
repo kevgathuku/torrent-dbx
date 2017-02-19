@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {observer} from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 
+import { beginDropboxUpload } from './dropboxUpload';
 import actions from './actions';
 import utils from './utils';
 import TorrentStatus from './TorrentStatus.jsx';
@@ -33,19 +34,20 @@ const App = observer(class App extends Component {
 
   componentDidMount() {
     actions.socket.on('got_torrent', this.torrentDownloaded)
-    actions.socket.on('file_status', this.updateFileStatus)
+    // actions.socket.on('file_status', this.updateFileStatus)
   }
 
   torrentDownloaded = (torrent) => {
     const store = this.props.store;
     store.addTorrent(torrent);
+    beginDropboxUpload(store, torrent);
     store.decrementPendingRequests();
   }
 
-  updateFileStatus = (fileStatus) => {
-    const store = this.props.store;
-    store.updateFileStatus(fileStatus);
-  }
+  // startDropboxUpload = (files) => {
+  //   const store = this.props.store;
+  //   store.updateFileStatus(fileStatus);
+  // }
 
   addTorrent = (event) => {
     // Prevent the default action for form submission

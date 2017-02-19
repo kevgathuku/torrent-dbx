@@ -3,7 +3,7 @@ import request from 'superagent';
 
 let BASE_URL;
 if (process.env.NODE_ENV === 'production') {
-  BASE_URL = process.env.REACT_APP_PRODUCTION_URL;
+  BASE_URL = '';
 } else {
   BASE_URL = 'http://localhost:4000';
 }

@@ -40,6 +40,7 @@ router.post('/torAdd', function(req, res) {
           return {
             name: file.name,
             length: file.length,
+            path: file.path,
             url: encodeURI(`${req.protocol}://${req.hostname}/download?file=${file.path}`)
           };
         })

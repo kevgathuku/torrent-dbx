@@ -39,7 +39,7 @@ npm run start:server
 Then on a different terminal window, run the following command to start the client:
 
 ```sh
-npm run start:server
+npm run start:client
 ```
 
 

@@ -8,7 +8,7 @@
   ],
   "success_url": "/",
   "env": {
-    "DROPBOX_ACCESS_TOKEN": {
+    "REACT_APP_DROPBOX_ACCESS_TOKEN": {
       "description": "A secret key required for saving files to your Dropbox account."
     }
   }

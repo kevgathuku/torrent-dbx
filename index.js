@@ -1,4 +1,5 @@
 const http = require('http');
+const path = require('path');
 
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -31,9 +32,16 @@ app.use(bodyParser.urlencoded({
     origin: process.env.CLIENT_URL || '*',
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept'
   }))
-  .use(express.static('public'))
+  .use(express.static(path.resolve(__dirname, 'build')))
   .use('/', require('./routes'));
 
+// Render the client routes if any other URL is passed in
+// Do this ony in production. The local client server is used otherwise
+if (isProduction) {
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
+  });
+}
 
 // Must use http server as listener rather than express app
 server.listen(PORT, () => console.log(`Listening on ${ PORT }`));

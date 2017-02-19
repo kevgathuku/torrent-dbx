@@ -31,6 +31,7 @@ app.use(bodyParser.urlencoded({
     origin: process.env.CLIENT_URL || '*',
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept'
   }))
+  .use(express.static('public'))
   .use('/', require('./routes'));
 
 

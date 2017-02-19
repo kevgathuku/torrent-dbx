@@ -25,7 +25,24 @@ cp .env.example .env
 
 The following are the required environment variables:
 
-- `DROPBOX_ACCESS_TOKEN`- Required to save files to your Dropbox account. You can obtain one from https://www.dropbox.com/developers/apps
+- `REACT_APP_DROPBOX_ACCESS_TOKEN`- Required to save files to your Dropbox account.
+You can obtain one from https://www.dropbox.com/developers/apps
+
+## Local development
+
+To develop the app locally, you need to start the server and client separately.
+To start the server, run:
+
+```sh
+npm run start:server
+```
+
+Then on a different terminal window, run the following command to start the client:
+
+```sh
+npm run start:client
+```
+
 
 ## Usage
 

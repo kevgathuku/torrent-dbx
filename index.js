@@ -14,12 +14,6 @@ const io = require('socket.io')(server, {
   origins: '*:*'
 });
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
-
 // Attach the io instance to the express app object
 // to make it accessible from the routes
 app.io = io;
@@ -34,7 +28,8 @@ app.use(bodyParser.urlencoded({
   }))
   .use(bodyParser.json())
   .use(cors({
-    origin: true
+    origin: process.env.CLIENT_URL || '*',
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept'
   }))
   .use('/', require('./routes'));
 

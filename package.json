@@ -33,6 +33,7 @@
     "magnet-uri": "^5.1.5",
     "mobx": "^2.7.0",
     "mobx-react": "^4.0.3",
+    "mobx-react-devtools": "^4.2.10",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-scripts": "0.8.5",
@@ -44,7 +45,6 @@
     "dotenv": "^2.0.0",
     "nodemon": "^1.11.0",
     "enzyme": "^2.7.1",
-    "mobx-react-devtools": "^4.2.10",
     "react-addons-test-utils": "^15.4.2"
   },
   "proxy": "http://localhost:4000"

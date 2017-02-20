@@ -36,18 +36,16 @@ To start the server, run:
 ```sh
 npm run start:server
 ```
+The server is started on `localhost:4000` by default.
 
 Then on a different terminal window, run the following command to start the client:
 
 ```sh
 npm run start:client
 ```
-
+The client runs on `localhost:3000` by default.
 
 ## Usage
-
-Start the app through the `npm start` command.
-The app should now be running on `localhost:3000`
 
 In the input field that appears, paste in a magnet link and the torrent will be
 downloaded and saved to your Dropbox account under the `Saves` folder.

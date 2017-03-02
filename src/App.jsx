@@ -22,7 +22,6 @@ const App = observer(class App extends Component {
               <input className="u-full-width" type="text" placeholder="magnet:?..." id="magnet_link" name="magnet"/>
               <input className="button-primary" type="submit" value="Download"/>
             </form>
-            <p>{ store.pendingRequests > 0 ? store.status : null }</p>
             {store.torrents.length > 0 ?
               <TorrentStatus torrents={ store.torrents } />
               : null}
@@ -33,14 +32,25 @@ const App = observer(class App extends Component {
   }
 
   componentDidMount() {
-    actions.socket.on('got_torrent', this.torrentDownloaded);
+    actions.socket.on('download:start', this.torrentDownloadStart);
+    actions.socket.on('download:progress', this.torrentDownloadProgress);
+    actions.socket.on('download:complete', this.torrentDownloadComplete);
   }
 
-  torrentDownloaded = (torrent) => {
+  torrentDownloadStart = (torrent) => {
     const store = this.props.store;
     store.addTorrent(torrent);
+  }
+
+  torrentDownloadProgress = (torrent) => {
+    const store = this.props.store;
+    store.mergeTorrentInfo(torrent);
+  }
+
+  torrentDownloadComplete = (torrent) => {
+    const store = this.props.store;
+    store.mergeTorrentInfo(torrent);
     beginDropboxUpload(store, torrent);
-    store.decrementPendingRequests();
   }
 
   addTorrent = (event) => {

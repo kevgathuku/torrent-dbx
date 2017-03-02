@@ -22,11 +22,27 @@ class AppStore {
       addTorrent: action('addTorrent', function(torrent) {
         this.torrents.push(torrent);
       }),
+      findTorrent: (list, torrent) => {
+        return list.find(tor => {
+          return tor.hash === torrent.hash;
+        });
+      },
+      findTorrentIndex: (list, torrent) => {
+        return list.findIndex(tor => {
+          return tor.hash === torrent.hash;
+        });
+      },
+      mergeTorrentInfo: action('mergeTorrentInfo', function(torrent) {
+        // Find the correct torrent in the torrents array
+        let currentTorrent = this.findTorrent(this.torrents, torrent);
+        let currentTorrentIndex = this.findTorrentIndex(this.torrents, torrent);
+        let mergedTorrent = Object.assign({}, currentTorrent, torrent);
+        this.torrents[currentTorrentIndex] = mergedTorrent;
+      }),
       removeTorrent: action('removeTorrent', function(torrent) {
         this.torrents.remove(torrent);
       }),
       updateFileStatus: action('updateFileStatus', function(fileStatus) {
-        console.log(fileStatus);
         // Find the correct torrent in the torrents array
         let torrent = this.torrents.find(tor => {
           return tor.hash === fileStatus.hash;

@@ -49,7 +49,9 @@ const checkStatus = (store, statusObject) => {
     });
 };
 
-export const beginDropboxUpload = (store, torrent) => {
+export const beginDropboxUpload = (store, torrentInfo) => {
+  let torrent = store.findTorrent(store.torrents, torrentInfo);
+  console.log('qwfgfrewe', torrent);
   torrent.files.forEach(function(file, index) {
     console.log(`${file.length} ${file.url}`);
 

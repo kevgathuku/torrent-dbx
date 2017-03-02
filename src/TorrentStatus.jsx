@@ -14,14 +14,23 @@ const TorrentItem = observer(class TorrentItem extends Component {
     return (
       <tbody>
       <tr>
-        <td>{torrent.name} {torrent.files.length > 0
+        <td><span>{torrent.name}</span>
+          {torrent.files.length > 0
             ? torrent.files.map(file =>
               <ul key={file.name}>
                 <li>{file.name} - {file.status}</li>
             </ul>)
             : null}
         </td>
-        <td>{torrent.status}</td>
+        {
+          torrent.stats ?
+          <div>
+            <td>{torrent.stats.speed}</td>
+            <td>{torrent.stats.progress === 1 ? 'Complete' : torrent.stats.progress}</td>
+          </div>
+          :
+          null
+        }
         <td><input type="button" value="Dismiss" onClick={this._onClick}/></td>
       </tr>
     </tbody>
@@ -39,6 +48,8 @@ const TorrentStatus = observer(class TorrentStatus extends Component {
           <thead>
             <tr>
               <th>Name</th>
+              <th>Speed</th>
+              <th>Progress</th>
               <th>Status</th>
               <th></th>
             </tr>

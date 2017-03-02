@@ -22,20 +22,11 @@ router.post('/torAdd', function(req, res) {
   client.add(req.body.magnet, {
     path: path.join(__dirname, 'tmp')
   }, (torrent) => {
-    torrent.on('download', function(bytes) {
-      console.log('just downloaded: ' + bytes);
-      console.log('total downloaded: ' + torrent.downloaded);
-      console.log('download speed: ' + torrent.downloadSpeed);
-      console.log('progress: ' + torrent.progress);
-    });
-
-    torrent.on('done', () => {
-      console.log('Torrent download finished');
-      // Send status to the client
-      socket.emit('got_torrent', {
+    client.on('torrent', function (torrent) {
+      // When torrent info is ready
+      socket.emit('download:start', {
         name: parsedInfo.name,
         hash: torrent.infoHash,
-        status: 'Torrent download finished',
         files: torrent.files.map(function(file) {
           return {
             name: file.name,
@@ -44,6 +35,31 @@ router.post('/torAdd', function(req, res) {
             url: encodeURI(`${req.protocol}://${req.hostname}/download?file=${file.path}`)
           };
         })
+      });
+    });
+
+    torrent.on('download', function(bytes) {
+      socket.emit('download:progress', {
+        hash: torrent.infoHash,
+        status: 'Torrent download in progress',
+        stats: {
+          downloaded: torrent.downloaded,
+          speed: torrent.downloadSpeed,
+          progress: torrent.progress
+        }
+      });
+
+      console.log('total downloaded: ' + torrent.downloaded);
+      console.log('download speed: ' + torrent.downloadSpeed);
+      console.log('progress: ' + torrent.progress);
+    });
+
+    torrent.on('done', () => {
+      console.log('Torrent download finished');
+      // Send status to the client
+      socket.emit('download:complete', {
+        hash: torrent.infoHash,
+        status: 'Torrent download complete. Uploading to Dropbox...'
       });
     });
   });

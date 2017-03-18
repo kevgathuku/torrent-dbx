@@ -7,6 +7,8 @@ import 'skeleton-css/css/skeleton.css';
 import App from './App';
 import appStore from './store';
 
+window.Raven.config('https://f5427ee402e8415bbe7475afc3551eb8@sentry.io/146783').install();
+
 useStrict(true);
 
 ReactDOM.render(

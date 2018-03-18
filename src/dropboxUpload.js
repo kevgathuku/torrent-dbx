@@ -23,6 +23,8 @@ const checkStatus = (store, statusObject) => {
             message: `${statusObject.name} upload in progress`
           }));
           // Call the function again after 10 seconds
+          // TODO: (Refatoring) Remove this logic here
+          // Should be done by the calling function
           setTimeout(
             function() {
               process.nextTick(checkStatus, store, statusObject);
@@ -68,10 +70,10 @@ export const beginDropboxUpload = (store, torrentInfo) => {
         // Async upload started
         if (response['.tag'] === 'async_job_id') {
           // Update store
-          let status = Object.assign(baseStatusObject, {
+          let status = Object.assign({}, baseStatusObject, {
             status: 'started',
             message: `Started uploading ${file.name} to Dropbox`,
-            async_job_id: response['async_job_id']
+            async_job_id: response.async_job_id
           });
           store.updateFileStatus(status);
 

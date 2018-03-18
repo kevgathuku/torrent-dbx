@@ -31,13 +31,9 @@ describe('Form submission', () => {
   });
 
   it('behaves correctly when a valid magnet URI is submitted', function() {
-    spyOn(store, 'incrementPendingRequests').and.callThrough();;
-
     component.find('input[type="text"]').node.value = validMagnet;
     component.find('input[type="submit"]').get(0).click();
 
-    expect(store.incrementPendingRequests).toHaveBeenCalled();
-    expect(store.pendingRequests).toBe(1);
     expect(actions.postMagnetURI).toBeCalled();
   });
 

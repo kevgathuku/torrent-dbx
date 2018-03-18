@@ -63,7 +63,6 @@ const App = observer(class App extends Component {
     if (!(utils.isValidMagnetURI(magnetValue))) {
       return store.setStatus('Please enter a valid magent URI');
     }
-    store.incrementPendingRequests();
     actions.postMagnetURI(store, magnetValue);
   }
 });

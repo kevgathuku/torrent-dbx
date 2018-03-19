@@ -30,7 +30,6 @@
     "react-scripts": "0.8.5",
     "redux": "^3.7.2",
     "request": "^2.79.0",
-    "skeleton-css": "^2.0.4",
     "socket.io": "^1.7.2",
     "socket.io-client": "^1.7.2",
     "superagent": "^3.3.1",
@@ -39,8 +38,7 @@
   "devDependencies": {
     "dotenv": "^2.0.0",
     "enzyme": "^2.7.1",
-    "nodemon": "^1.11.0",
-    "react-addons-test-utils": "^15.4.2"
+    "nodemon": "^1.11.0"
   },
   "proxy": "http://localhost:4000"
 }

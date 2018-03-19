@@ -42,10 +42,9 @@ export const torrentsReducer = (state = initialState, action) => {
         }
       });
     case "MERGE_TORRENT_INFO":
-
-    return produce(state, draftState => {
-      let currentTorrent = draftState.torrents[action.torrent.hash];
-      let mergedTorrent = Object.assign({}, currentTorrent, action.torrent);
+      return produce(state, draftState => {
+        let currentTorrent = draftState.torrents[action.torrent.hash];
+        let mergedTorrent = Object.assign({}, currentTorrent, action.torrent);
         draftState.torrents[action.torrent.hash] = mergedTorrent;
       });
     default:

@@ -21,7 +21,7 @@ store.subscribe(() => {
   let state = store.getState();
   for (const prop in state.torrents) {
     if (state.torrents.hasOwnProperty(prop)) {
-      console.log(`store.${prop} = ${this.torrents[prop]}`);
+      console.log(`store.${prop} = ${state.torrents[prop]}`);
     }
   }
 });

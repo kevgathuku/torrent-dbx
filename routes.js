@@ -59,7 +59,7 @@ router.post('/torAdd', function(req, res) {
       // Send status to the client
       socket.emit('download:complete', {
         hash: torrent.infoHash,
-        status: 'Torrent download complete. Uploading to Dropbox...'
+        status: 'Torrent download complete'
       });
     });
   });

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {observer} from 'mobx-react';
 import DevTools from 'mobx-react-devtools';
 
-import { beginDropboxUpload } from './dropboxUpload';
 import actions from './actions';
 import utils from './utils';
 import TorrentStatus from './TorrentStatus.jsx';
@@ -50,7 +49,6 @@ const App = observer(class App extends Component {
   torrentDownloadComplete = (torrent) => {
     const store = this.props.store;
     store.mergeTorrentInfo(torrent);
-    beginDropboxUpload(store, torrent);
   }
 
   addTorrent = (event) => {

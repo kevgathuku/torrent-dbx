@@ -14,7 +14,11 @@
     "eject": "react-scripts eject",
     "heroku-postbuild": "npm run build"
   },
-  "keywords": ["torrent", "dropbox", "download"],
+  "keywords": [
+    "torrent",
+    "dropbox",
+    "download"
+  ],
   "author": "Kevin Ndung'u",
   "license": "MIT",
   "dependencies": {
@@ -23,6 +27,7 @@
     "cors": "^2.8.1",
     "dropbox": "^2.5.0",
     "express": "^4.14.0",
+    "immer": "^1.2.0",
     "magnet-uri": "^5.1.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -36,9 +41,12 @@
     "webtorrent": "^0.98.0"
   },
   "devDependencies": {
+    "deep-freeze": "^0.0.1",
     "dotenv": "^2.0.0",
     "enzyme": "^2.7.1",
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.11.0",
+    "react-addons-test-utils": "^15.6.2",
+    "redux-devtools": "^3.4.1"
   },
   "proxy": "http://localhost:4000"
 }

@@ -22,15 +22,15 @@
   "author": "Kevin Ndung'u",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.15.2",
+    "body-parser": "^1.19.0",
     "bulma": "^0.6.2",
-    "cors": "^2.8.1",
+    "cors": "^2.8.5",
     "dropbox": "^2.5.0",
-    "express": "^4.14.0",
+    "express": "^4.17.1",
     "immer": "^1.2.0",
-    "magnet-uri": "^5.1.5",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "magnet-uri": "^5.2.4",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
     "react-redux": "^5.0.7",
     "react-scripts": "0.8.5",
     "redux": "^3.7.2",
@@ -38,7 +38,7 @@
     "socket.io": "^1.7.2",
     "socket.io-client": "^1.7.2",
     "superagent": "^3.3.1",
-    "underscore": "^1.8.3",
+    "underscore": "^1.9.2",
     "webtorrent": "^0.98.0"
   },
   "devDependencies": {
@@ -47,7 +47,7 @@
     "enzyme": "^2.7.1",
     "nodemon": "^1.11.0",
     "react-addons-test-utils": "^15.6.2",
-    "redux-devtools": "^3.4.1"
+    "redux-devtools": "^3.5.0"
   },
   "proxy": "http://localhost:4000"
 }
